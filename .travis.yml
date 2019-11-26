@@ -1,0 +1,21 @@
+# os: osx # enable this if you need macOS support
+language: ruby
+rvm:
+  - 2.6.4
+
+before_install:
+  - gem update --system
+  - gem install bundler
+  - bundle install
+
+after_script:
+  - date
+
+jobs:
+  include:
+    - stage: lint
+      name: "Code quality"
+      script: bundle exec rubocop
+    - stage: lint
+      name: "Test CI"
+      script: bundle exec fastlane test_ci

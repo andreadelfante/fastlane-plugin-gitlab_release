@@ -1,0 +1,38 @@
+require 'dotenv'
+
+Dotenv.load('../.env')
+
+endpoint = ENV["GITLAB_BASE_URL"]
+private_token = ENV["PRIVATE_TOKEN"]
+
+ENV['GITLAB_API_ENDPOINT'] = endpoint
+ENV['GITLAB_API_PRIVATE_TOKEN'] = private_token
+
+version_name = "1.1"
+project_id = 50
+filtering_labels = "changelog"
+
+lane :test_ci do
+  UI.success("Everything is working in CI!")
+end
+
+lane :test_changelog do
+  changelog = gitlab_release_changelog(version_name: version_name,
+                                       project_id: project_id,
+                                       filtering_labels: filtering_labels)
+
+  puts("Changelog with reference:\n#{changelog}")
+  puts("Changelog with reference:\n#{changelog.to_s_with_reference(false)}")
+end
+
+lane :test_close do
+  changelog = gitlab_release_changelog(version_name: version_name,
+                                         project_id: project_id,
+                                         filtering_labels: filtering_labels)
+
+  gitlab_release_close(
+    version_name: version_name,
+    project_id: project_id,
+    entries: changelog
+  )
+end
