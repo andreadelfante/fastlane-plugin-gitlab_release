@@ -1,6 +1,7 @@
 # os: osx # enable this if you need macOS support
 language: ruby
 rvm:
+  - 2.4.6
   - 2.6.4
 
 before_install:
@@ -17,5 +18,5 @@ jobs:
       name: "Code quality"
       script: bundle exec rubocop
     - stage: lint
-      name: "Test CI"
+      name: "Test CI Lane"
       script: bundle exec fastlane test_ci

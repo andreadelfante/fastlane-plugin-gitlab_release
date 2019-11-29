@@ -7,10 +7,10 @@ module Fastlane
       def self.run(params)
         require 'gitlab/release/changelog/generator'
 
-        endpoint = params[:endpoint] || ENV["GITLAB_API_ENDPOINT"] || ENV["CI_API_V4_URL"]
-        private_token = params[:private_token] || ENV["GITLAB_API_PRIVATE_TOKEN"]
+        endpoint = params[:endpoint]
+        private_token = params[:private_token]
         version_name = params[:version_name]
-        project_id = params[:project_id] || ENV["CI_PROJECT_ID"]
+        project_id = params[:project_id]
         include_mrs = params[:include_mrs]
         include_issues = params[:include_issues]
         split_key = params[:split_key]
@@ -22,7 +22,8 @@ module Fastlane
         array_mrs_labels = filtering_mrs_labels.split(split_key) unless filtering_mrs_labels.empty?
         array_issues_labels = filtering_issues_labels.split(split_key) unless filtering_issues_labels.empty?
 
-        changelog_generator = Gitlab::Release::Changelog::Generator.new(endpoint, private_token)
+        changelog_generator = Gitlab::Release::Changelog::Generator.new(endpoint: endpoint,
+                                                                        private_token: private_token)
 
         UI.message("Creating changelog for version '#{version_name}'.")
         changelog = changelog_generator.changelog(version_name,
@@ -33,7 +34,7 @@ module Fastlane
                                                   filtering_mrs_labels: array_mrs_labels,
                                                   filtering_issues_labels: array_issues_labels)
 
-        UI.success("Generated changelog for #{version_name} successfully! :)")
+        UI.success("Generated changelog for #{version_name} successfully!")
         changelog
       end
 
@@ -57,21 +58,21 @@ module Fastlane
         [
           FastlaneCore::ConfigItem.new(key: :endpoint,
                                        env_name: "GITLAB_API_ENDPOINT",
-                                       description: "API endpoint URL, default: ENV['GITLAB_API_ENDPOINT'] and falls back to ENV['CI_API_V4_URL']",
+                                       description: "The API endpoint URL, default: ENV['GITLAB_API_ENDPOINT'] and falls back to ENV['CI_API_V4_URL']",
                                        optional: true,
                                        type: String),
           FastlaneCore::ConfigItem.new(key: :private_token,
                                        env_name: "GITLAB_API_PRIVATE_TOKEN",
-                                       description: "user's private token or OAuth2 access token",
+                                       description: "User's private token or OAuth2 access token",
                                        optional: true,
                                        type: String),
           FastlaneCore::ConfigItem.new(key: :version_name,
-                                       description: "The version name to generate the changelog",
+                                       description: "The name of the version. (ex: 1.0)",
                                        optional: false,
                                        type: String),
           FastlaneCore::ConfigItem.new(key: :project_id,
                                        env_name: "CI_PROJECT_ID",
-                                       description: "The id of this project",
+                                       description: "The id of this project, given from GitLab. Default ENV[\"CI_PROJECT_ID\"]",
                                        optional: true,
                                        is_string: false,
                                        verify_block: proc do |value|
@@ -79,18 +80,18 @@ module Fastlane
                                          when String, Integer
                                            @project_id = value
                                          else
-                                           UI.user_error!("The project_id must be a String or Integer value.")
+                                           UI.user_error!("The project_id must be a String or Integer value")
                                          end
                                        end),
           FastlaneCore::ConfigItem.new(key: :include_mrs,
                                        env_name: "GITLAB_RELEASE_INCLUDE_MRS",
-                                       description: "Should I include MRs in the changelog?",
+                                       description: "Should the generator include merge requests?",
                                        optional: true,
                                        type: Boolean,
                                        default_value: true),
           FastlaneCore::ConfigItem.new(key: :include_issues,
                                        env_name: "GITLAB_RELEASE_INCLUDE_ISSUES",
-                                       description: "Should I include issues in the changelog?",
+                                       description: "Should the generator include issues?",
                                        optional: true,
                                        type: Boolean,
                                        default_value: false),

@@ -1,6 +1,11 @@
 # gitlab_release plugin
 
 [![fastlane Plugin Badge](https://rawcdn.githack.com/fastlane/fastlane/master/fastlane/assets/plugin-badge.svg)](https://rubygems.org/gems/fastlane-plugin-gitlab_release)
+[![License](https://img.shields.io/badge/license-MIT-green.svg?style=flat)](https://github.com/andreadelfante/fastlane-plugin-gitlab_release/blob/master/LICENSE)
+[![Gem](https://img.shields.io/gem/v/gitlab-release-tools.svg?style=flat)](https://rubygems.org/gems/fastlane-plugin-gitlab_release)
+[![Build Status](https://travis-ci.org/andreadelfante/gitlab-release-tools.svg?branch=master)](https://travis-ci.org/andreadelfante/fastlane-plugin-gitlab_release)
+
+The Fastlane wrapper of [gitlab-release-tools](https://github.com/andreadelfante/gitlab-release-tools).
 
 ## Getting Started
 
@@ -10,17 +15,17 @@ This project is a [_fastlane_](https://github.com/fastlane/fastlane) plugin. To 
 fastlane add_plugin gitlab_release
 ```
 
-## About gitlab_release
-
-Fastlane wrapper of gitlab-release-tools
-
-**Note to author:** Add a more detailed description about this plugin here. If your plugin contains multiple actions, make sure to mention them here.
-
 ## Example
 
-Check out the [example `Fastfile`](fastlane/Fastfile) to see how to use this plugin. Try it by cloning the repo, running `fastlane install_plugins` and `bundle exec fastlane test`.
+```ruby
+version_name = '1.0'
 
-**Note to author:** Please set up a sample project to make it easy for users to explore what your plugin does. Provide everything that is necessary to try out the plugin in this project (including a sample Xcode/Android project if necessary)
+changelog = gitlab_release_changelog(version_name: version_name) # for more fastlane action gitlab_release_changelog
+puts("Changelog with no reference:\n#{changelog}") # or changelog.to_s
+puts("Changelog with reference:\n#{changelog.to_s_with_reference}")
+
+gitlab_release_close(version_name: version_name, entries: changelog)  # for more fastlane action gitlab_release_close
+```
 
 ## Run tests for this plugin
 

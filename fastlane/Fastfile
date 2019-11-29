@@ -21,8 +21,8 @@ lane :test_changelog do
                                        project_id: project_id,
                                        filtering_labels: filtering_labels)
 
-  puts("Changelog with reference:\n#{changelog}")
-  puts("Changelog with reference:\n#{changelog.to_s_with_reference(false)}")
+  puts("Changelog with no reference:\n#{changelog}")
+  puts("Changelog with reference:\n#{changelog.to_s_with_reference}")
 end
 
 lane :test_close do
